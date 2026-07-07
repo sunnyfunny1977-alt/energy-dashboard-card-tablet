@@ -16,7 +16,7 @@ Die Karte liest die **Langzeit-Statistiken des Recorders** (dieselben Daten, die
   - 🌿 **CO₂** — CO₂-Einsparung (0,363 kg/kWh genutzter Solarenergie)
   - 📅 **Heatmap** — Produktions-Kalender mit Markierung des besten Tages
   - 📋 **Tabelle** — alle Tageswerte im Detail
-- **ROI-Einstellungen** direkt in der Karte: Strompreis, Einspeisevergütung, Anlagenkosten
+- **ROI-Einstellungen** direkt in der Karte: Strompreis, Einspeisevergütung, Anlagenkosten — Änderungen werden automatisch im Browser gespeichert (localStorage) und überleben Seiten-Reloads; gespeicherte Werte haben Vorrang vor den YAML-Defaults
 - Optimiert für **Tablet-/Panel-Ansicht** (3-Spalten-Grid), responsive bis Smartphone
 - Unterstützt helle und dunkle HA-Themes (nutzt die Theme-Variablen)
 

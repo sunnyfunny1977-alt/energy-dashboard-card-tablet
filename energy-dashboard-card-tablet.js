@@ -1,6 +1,11 @@
 /**
  * HA Energie-Dashboard Analytics — Home Assistant Custom Card (Tablet-Version)
- * Version: 1.0.0  |  Optimiert für Lovelace-Panel / Tablet-Darstellung
+ * Version: 1.0.1  |  Optimiert für Lovelace-Panel / Tablet-Darstellung
+ *
+ * 1.0.1: ROI-/Tarif-Einstellungen (Strompreis, Einspeisevergütung,
+ *        Anlagenkosten) werden im Browser gespeichert (localStorage) und
+ *        überleben Seiten-Reloads. Gespeicherte Werte haben Vorrang vor den
+ *        YAML-Defaults der Karten-Konfiguration.
  *
  * Zeigt die Daten des eingebauten Home-Assistant-Energie-Dashboards
  * (Langzeit-Statistiken des Recorders) im Stil der Anker SOLIX Tablet-Karte.
@@ -66,6 +71,9 @@
   // Konfig-Werte können als String oder Liste angegeben werden
   const toArr = (v) => v == null ? [] : (Array.isArray(v) ? v : [v]);
 
+  // Persistenz der ROI-/Tarif-Einstellungen (pro Browser)
+  const SETTINGS_KEY = 'energy-dashboard-card-tablet-settings';
+
   const BASE_FIELDS = ['gesamtErzeugung','eigenverbrauch','netzimport','einspeisung',
     'speicherLadung','speicherEntladung','genutzteSolar','co2','geraeteSumme','rest'];
 
@@ -119,8 +127,26 @@
       if (cfg.system_cost)    this._cost   = parseFloat(cfg.system_cost);
       if (cfg.feed_in_tariff) this._feedIn = parseFloat(cfg.feed_in_tariff);
       if (cfg.days)           this._days   = parseInt(cfg.days);
+      this._loadStoredSettings(); // im Browser gespeicherte Werte haben Vorrang
       this._render();
       this._maybeLoad();
+    }
+
+    _loadStoredSettings() {
+      try {
+        const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+        if (typeof s.price  === 'number' && isFinite(s.price))  this._price  = s.price;
+        if (typeof s.feedIn === 'number' && isFinite(s.feedIn)) this._feedIn = s.feedIn;
+        if (typeof s.cost   === 'number' && isFinite(s.cost))   this._cost   = s.cost;
+      } catch (_) { /* defekter/blockierter Storage: Defaults verwenden */ }
+    }
+
+    _saveStoredSettings() {
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+          price: this._price, feedIn: this._feedIn, cost: this._cost,
+        }));
+      } catch (_) { /* Storage nicht verfügbar: Werte gelten nur für die Sitzung */ }
     }
 
     set hass(h) { this._hass = h; this._maybeLoad(); }
@@ -371,6 +397,7 @@
           if (id === 'energy-price')   this._price  = v;
           if (id === 'feed-in-tariff') this._feedIn = v;
           if (id === 'system-cost')    this._cost   = v;
+          this._saveStoredSettings();
           this._render(); this._drawCharts();
         });
       });
@@ -553,6 +580,7 @@
     settings: (c) => `
       <div class="settings">
         <h3>⚙️ ROI &amp; Tarif-Einstellungen</h3>
+        <p class="set-hint">Änderungen werden automatisch in diesem Browser gespeichert.</p>
         <div class="sg">
           <div class="si"><label>⚡ Strompreis (€/kWh)</label>
             <input id="energy-price"   type="number" min="0.001" max="2"   step="0.001" value="${c._price.toFixed(3)}"/></div>
@@ -820,7 +848,8 @@ ha-card { font-family:'Segoe UI',system-ui,sans-serif; overflow:hidden }
 
 /* ── SETTINGS ───────────────────────────────────────────────────────────── */
 .settings { background:var(--secondary-background-color,#f8f9fa); border-radius:14px; padding:18px; margin-bottom:18px; border:1px solid #fde68a }
-.settings h3 { font-size:14px; font-weight:800; color:#d97706; margin:0 0 14px }
+.settings h3 { font-size:14px; font-weight:800; color:#d97706; margin:0 0 4px }
+.set-hint { font-size:11px; color:var(--secondary-text-color,#888); margin:0 0 14px }
 .sg { display:grid; grid-template-columns:repeat(3,1fr); gap:16px }
 .si label { display:block; font-size:11px; font-weight:700; color:var(--secondary-text-color,#888); margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px }
 .si input { width:100%; padding:9px 12px; border:1px solid var(--divider-color,#e2e8f0); border-radius:10px; background:var(--card-background-color,#fff); color:var(--primary-text-color,#111); font-size:14px; font-weight:600; box-sizing:border-box }
