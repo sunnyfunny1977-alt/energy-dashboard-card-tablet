@@ -27,12 +27,10 @@ Die Karte liest die **Langzeit-Statistiken des Recorders** (dieselben Daten, die
 
 ## Installation
 
-### Variante A: HACS
-
-> **Hinweis:** Die HACS-Installation funktioniert nur, wenn dieses Repository **öffentlich** ist. Bei einem privaten Repository bitte Variante B (manuell) verwenden.
+### Variante A: HACS (empfohlen)
 
 1. HACS → drei Punkte oben rechts → **Benutzerdefinierte Repositories**
-2. Repository-URL dieses Repos eintragen, Typ: **Dashboard** (Lovelace)
+2. Repository-URL eintragen: `https://github.com/sunnyfunny1977-alt/energy-dashboard-card-tablet`, Typ: **Dashboard** (Lovelace)
 3. Die Karte **„Energie-Dashboard Analytics (Tablet)"** suchen und herunterladen
 4. HACS registriert die Ressource automatisch. Danach Browser-Cache leeren (`Strg+Shift+R`).
 
