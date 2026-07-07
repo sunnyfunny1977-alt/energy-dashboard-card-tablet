@@ -27,7 +27,9 @@ Die Karte liest die **Langzeit-Statistiken des Recorders** (dieselben Daten, die
 
 ## Installation
 
-### Variante A: HACS (empfohlen)
+### Variante A: HACS
+
+> **Hinweis:** Die HACS-Installation funktioniert nur, wenn dieses Repository **öffentlich** ist. Bei einem privaten Repository bitte Variante B (manuell) verwenden.
 
 1. HACS → drei Punkte oben rechts → **Benutzerdefinierte Repositories**
 2. Repository-URL dieses Repos eintragen, Typ: **Dashboard** (Lovelace)
